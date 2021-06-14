@@ -1,6 +1,6 @@
 import sys
 from argparse import ArgumentParser, FileType
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from importlib import import_module
 from types import ModuleType
 from typing import Callable, Iterator, List, Optional, Set, TextIO, TypedDict
@@ -16,6 +16,7 @@ from .utils import load_factory
 class Args:
     modules: List[str]
     layers: TextIO
+    ignore: List[set] = field(default_factory=set)
     tree_factory_module: str = "layer_enforcer.grimp:new_grimp_tree"
 
 
@@ -28,10 +29,14 @@ def parse_args(argv: List[str]) -> Args:
         type=FileType("rt", encoding="utf-8"),
         required=True,
     )
+    parser.add_argument(
+        "--ignore",
+        type=lambda s: set(s.split(",")),
+    )
 
     args = parser.parse_args(argv)
 
-    return Args(args.modules, args.layers)
+    return Args(args.modules, args.layers, args.ignore)
 
 
 class LayerDict(TypedDict):
@@ -78,6 +83,9 @@ def main(
     has_conflicts = False
 
     for conflict in conflicts:
+        if conflict.main.module in args.ignore:
+            continue
+
         has_conflicts = True
         writeln(f"{conflict.main.module}:")
         writeln(f"  Main layer: {conflict.main.layer.name}")

@@ -64,6 +64,8 @@ def test_main(tmp_path, layers_yaml, layers):
             Match("b", b, [("z", "y"), ("x", "0")], ["tset"]),
         ),
         Conflict(Match("n", c), Match("m", a)),
+        Conflict(Match("ignored.module", c), Match("any", a)),
+        Conflict(Match("module.ignored", c), Match("any", a)),
     ]
     fake_tree = stub()
     module = stub(new_grimp_tree=lambda *m: fake_tree)
@@ -82,7 +84,14 @@ def test_main(tmp_path, layers_yaml, layers):
 
     with raises(SystemExit):
         main(
-            ["aaa", "bbb", "--layers", str(f)],
+            [
+                "aaa",
+                "bbb",
+                "--layers",
+                str(f),
+                "--ignore",
+                "ignored.module,module.ignored",
+            ],
             writeln=writeln,
             import_module=import_module,
             match_modules=match_modules,
