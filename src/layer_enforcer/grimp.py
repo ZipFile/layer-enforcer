@@ -21,19 +21,14 @@ class GrimpTree(Tree):
             yield module
             yield from self.graph.find_descendants(module)
 
-    def find_import_chain(self, importer: str, imported: str) -> Tuple[str, ...]:
+    def find_chains(self, importer: str, imported: str) -> Iterator[Tuple[str, ...]]:
         try:
-            chain = self.graph.find_shortest_chain(importer, imported)
+            yield from self.graph.find_all_simple_chains(importer, imported)
         except NodeNotFound:
-            chain = None
+            pass
 
-        if chain is not None:
-            return chain
-
-        return ()
-
-    def find_imported_modules(self, module: str) -> Set[str]:
-        return self.graph.find_upstream_modules(module)
+    def find_downstream_modules(self, module: str) -> Set[str]:
+        return self.graph.find_downstream_modules(module)
 
 
 def new_grimp_tree(*modules: str) -> Tree:

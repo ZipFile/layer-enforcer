@@ -39,11 +39,11 @@ class Tree(metaclass=ABCMeta):
         """Iterate over all sumbodules."""
 
     @abstractmethod
-    def find_import_chain(self, importer: str, imported: str) -> Tuple[str, ...]:
-        """Return import chain from ``importer`` to ``import``."""
+    def find_chains(self, importer: str, imported: str) -> Iterator[Tuple[str, ...]]:
+        """Return import chains from ``importer`` to ``import``."""
 
     @abstractmethod
-    def find_imported_modules(self, module: str) -> Set[str]:
+    def find_downstream_modules(self, module: str) -> Set[str]:
         """Find all modules directly or indirectly imported by ``module``."""
 
 
