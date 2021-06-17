@@ -27,7 +27,7 @@ def parse_args(argv: List[str]) -> Args:
     parser.add_argument(
         "--layers",
         type=FileType("rt", encoding="utf-8"),
-        required=True,
+        default="layers.yml",
     )
     parser.add_argument(
         "--ignore",

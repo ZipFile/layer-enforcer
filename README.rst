@@ -19,6 +19,17 @@ The tool was designed to help maintain following order of things:
 
 Be warned, since this might not the best fit for you.
 
+Algorithm
+=========
+
+First pass: Match modules to layers. Report conflict if single module match
+more than one layer.
+
+Second pass: For each module, iterate through all the imported modules.
+If current module has no assigned layer, assign first found layer within list
+of imported modules. If current module has an assigned layer, report conflict
+if import is not allowed.
+
 Installation
 ============
 
