@@ -35,7 +35,7 @@ Installation
 
 .. code-block:: sh
 
-    pip install layer-enforce
+    pip install layer-enforcer
 
 For Development
 ---------------
