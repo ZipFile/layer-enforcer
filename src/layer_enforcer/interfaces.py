@@ -1,6 +1,18 @@
 from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass, field
-from typing import AbstractSet, Iterable, Iterator, List, Optional, Protocol, Set, Tuple
+from pathlib import Path
+from typing import (
+    AbstractSet,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Protocol,
+    Set,
+    TextIO,
+    Tuple,
+    Union,
+)
 
 EMPTY_SET: AbstractSet[str] = frozenset()
 
@@ -55,3 +67,25 @@ class TreeFactory(Protocol):
 class MatchModules(Protocol):
     def __call__(self, tree: Tree, layers: Set[Layer]) -> Iterable[Conflict]:
         """Find conflicts within import tree."""
+
+
+class LayersLoaderError(Exception):
+    """Base error for all :class:`LayersLoader` errors."""
+
+
+class InvalidLayerFormat(LayersLoaderError):
+    """Provided file has invalid layer specification format."""
+
+
+class LayersLoader(metaclass=ABCMeta):
+    @abstractmethod
+    def text_io(self, f: TextIO) -> Set[Layer]:
+        """Load layers from file-like object."""
+
+    @abstractmethod
+    def path(self, path: Union[Path, str]) -> Set[Layer]:
+        """Load layers from file at ``path``.
+
+        Raises:
+            InvalidLayerFormat: When layer specification.
+        """
