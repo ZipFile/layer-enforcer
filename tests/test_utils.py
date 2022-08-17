@@ -1,5 +1,4 @@
 from pretend import stub
-
 from pytest import mark
 
 from layer_enforcer.interfaces import Layer

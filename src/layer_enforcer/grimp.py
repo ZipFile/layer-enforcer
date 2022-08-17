@@ -1,9 +1,8 @@
 from typing import Iterator, Set, Tuple
 
 from grimp import build_graph
-from grimp.exceptions import ModuleNotPresent
 from grimp.application.ports.graph import AbstractImportGraph
-
+from grimp.exceptions import ModuleNotPresent
 from networkx.exception import NodeNotFound
 
 from .interfaces import Tree
