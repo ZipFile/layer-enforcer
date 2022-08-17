@@ -37,4 +37,4 @@ def load_factory(
 ) -> TreeFactory:
     name, attr = import_string.rsplit(":", 1)
     module = import_module(name)
-    return getattr(module, attr)
+    return getattr(module, attr)  # type: ignore[no-any-return]
