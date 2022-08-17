@@ -1,8 +1,8 @@
 from pretend import stub
-
 from pytest import fixture, raises
 
-from layer_enforcer.cli import main, parse_args, parse_layers
+from layer_enforcer.cli import DEFAULT_LAYER_LOADER, main
+from layer_enforcer.config.args import ArgparseConfigLoader
 from layer_enforcer.interfaces import Conflict, Layer, Match
 
 
@@ -29,29 +29,6 @@ def layers():
     b = Layer("b", a, imports={"yyy"}, submodules={"bbb"})
     c = Layer("c", b, imports={"zzz"}, submodules={"ccc"})
     return [a, b, c]
-
-
-def test_parse_layers(layers_yaml, layers):
-    parsed_layers = sorted(parse_layers(layers_yaml), key=lambda l: l.name)
-    parent = None
-
-    for parsed, expected in zip(parsed_layers, layers):
-        assert parsed.name == expected.name
-        assert parsed.imports == expected.imports
-        assert parsed.submodules == expected.submodules
-        assert parsed.parent == parent
-
-        parent = parsed
-
-
-def test_parse_args(tmp_path, layers_yaml):
-    f = tmp_path / "layers.yaml"
-    f.write_text(layers_yaml)
-
-    args = parse_args(["aaa", "bbb", "--layers", str(f)])
-
-    assert args.modules == ["aaa", "bbb"]
-    assert args.layers.read() == layers_yaml
 
 
 def test_main(tmp_path, layers_yaml, layers):
@@ -82,19 +59,24 @@ def test_main(tmp_path, layers_yaml, layers):
     def writeln(s):
         out.append(s)
 
+    config_loader = ArgparseConfigLoader(
+        [
+            "aaa",
+            "bbb",
+            "--layers",
+            str(f),
+            "--ignore",
+            "ignored.module,module.ignored",
+        ],
+        layers_loader=DEFAULT_LAYER_LOADER,
+    )
+
     with raises(SystemExit):
         main(
-            [
-                "aaa",
-                "bbb",
-                "--layers",
-                str(f),
-                "--ignore",
-                "ignored.module,module.ignored",
-            ],
             writeln=writeln,
             import_module=import_module,
             match_modules=match_modules,
+            config_loader=config_loader,
         )
 
     assert out == [
@@ -132,11 +114,16 @@ def test_main_no_conflict(tmp_path, layers_yaml):
     def writeln(s):
         out.append(s)
 
-    main(
+    config_loader = ArgparseConfigLoader(
         ["aaa", "bbb", "--layers", str(f)],
+        layers_loader=DEFAULT_LAYER_LOADER,
+    )
+
+    main(
         writeln=writeln,
         import_module=import_module,
         match_modules=match_modules,
+        config_loader=config_loader,
     )
 
     assert out == []
