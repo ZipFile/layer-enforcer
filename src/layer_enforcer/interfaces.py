@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import (
     AbstractSet,
+    Collection,
     Iterable,
     Iterator,
     List,
@@ -65,7 +66,7 @@ class TreeFactory(Protocol):
 
 
 class MatchModules(Protocol):
-    def __call__(self, tree: Tree, layers: Set[Layer]) -> Iterable[Conflict]:
+    def __call__(self, tree: Tree, layers: Collection[Layer]) -> Iterable[Conflict]:
         """Find conflicts within import tree."""
 
 

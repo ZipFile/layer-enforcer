@@ -3,7 +3,7 @@ from typing import Iterator, Set, Tuple
 from grimp import build_graph
 from grimp.application.ports.graph import AbstractImportGraph
 from grimp.exceptions import ModuleNotPresent
-from networkx.exception import NodeNotFound
+from networkx.exception import NodeNotFound  # type: ignore[import]
 
 from .interfaces import Tree
 

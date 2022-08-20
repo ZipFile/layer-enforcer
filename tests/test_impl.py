@@ -1,4 +1,4 @@
-from typing import List, NamedTuple, Tuple
+from typing import Iterator, List, NamedTuple, Set, Tuple
 
 from pytest import fixture, mark
 
@@ -7,17 +7,17 @@ from layer_enforcer.interfaces import Layer, Tree
 
 
 @fixture
-def layers():
+def layers() -> Set[Layer]:
     root = Layer("root", submodules={"_r"})
     svc = Layer("svc", root, submodules={"_s"})
     web = Layer("web", svc, imports={"w"}, submodules={"_w"})
     db = Layer("db", svc, imports={"d"}, submodules={"_d"})
 
-    return [root, svc, web, db]
+    return {root, svc, web, db}
 
 
 class FakeTree(Tree):
-    def __init__(self, import_chains, prefix="t"):
+    def __init__(self, import_chains: List[Tuple[str, ...]], prefix: str = "t") -> None:
         self.modules = {
             import_
             for import_chain in import_chains
@@ -31,17 +31,17 @@ class FakeTree(Tree):
             for j in range(i + 1, len(import_chain))
         }
 
-    def walk(self):
+    def walk(self) -> Iterator[str]:
         return iter(sorted(self.modules))
 
-    def find_chains(self, importer, imported):
+    def find_chains(self, importer: str, imported: str) -> Iterator[Tuple[str, ...]]:
         try:
             yield self.chains[importer, imported]
         except KeyError:
             pass
 
-    def find_upstream_modules(self, module):
-        modules = set()
+    def find_upstream_modules(self, module: str) -> Set[str]:
+        modules: Set[str] = set()
 
         for chain in self.chains:
             if chain[0] == module:
@@ -50,21 +50,21 @@ class FakeTree(Tree):
         return modules
 
 
-def test_match_layer_no_match():
+def test_match_layer_no_match() -> None:
     tree = FakeTree([])
     layer = Layer("test", None, {"test"}, {"test"})
 
     assert not match_layer(tree, layer, "tset")
 
 
-def test_match_layer_imports():
+def test_match_layer_imports() -> None:
     tree = FakeTree([("test", "zzz", "xxx")])
     layer = Layer("test", None, {"xxx"}, set())
 
     assert match_layer(tree, layer, "test")
 
 
-def test_match_layer_submodule():
+def test_match_layer_submodule() -> None:
     tree = FakeTree([])
     layer = Layer("test", None, set(), {"test"})
 
@@ -114,7 +114,9 @@ class Pair(NamedTuple):
     ],
     ids=["double_layered", "infect"],
 )
-def test_match_modules(chains, expected, layers):
+def test_match_modules(
+    chains: List[Tuple[str, ...]], expected: List[Pair], layers: Set[Layer]
+) -> None:
     tree = FakeTree(chains)
 
     result = [

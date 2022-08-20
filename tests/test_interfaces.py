@@ -1,9 +1,11 @@
+from typing import List, Set, Tuple
+
 from pytest import mark
 
 from layer_enforcer.interfaces import Layer, Match
 
 
-def test_layer_repr():
+def test_layer_repr() -> None:
     assert repr(Layer("test")) == repr("test")
 
 
@@ -16,5 +18,7 @@ def test_layer_repr():
         ([("a", "b")], {"x", "y"}, True),
     ],
 )
-def test_match_bool(chains, submodules, expected, domain):
+def test_match_bool(
+    chains: List[Tuple[str, ...]], submodules: Set[str], expected: bool, domain: Layer
+) -> None:
     assert bool(Match("test", domain, chains, submodules)) == expected

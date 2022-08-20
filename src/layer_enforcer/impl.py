@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import Dict, Iterable, Set, Tuple
+from typing import Collection, Dict, Iterable, Set, Tuple
 
 from .interfaces import Conflict, Layer, Match, Tree
 from .utils import depth, is_import_allowed, match_submodule
@@ -18,7 +18,7 @@ def match_layer(tree: Tree, layer: Layer, module: str) -> Match:
     return match
 
 
-def match_modules(tree: Tree, layers: Set[Layer]) -> Iterable[Conflict]:
+def match_modules(tree: Tree, layers: Collection[Layer]) -> Iterable[Conflict]:
     module_matches: Dict[str, Match] = {}
     modules: Set[str] = set()
     ordered_layers = sorted(layers, key=lambda l: (depth(l), l.name))
