@@ -28,7 +28,7 @@ class ParseArgs(Protocol):
 def parse_args(argv: List[str]) -> Args:
     parser = ArgumentParser()
 
-    parser.add_argument("modules", nargs="+")
+    parser.add_argument("modules", nargs="*")
     parser.add_argument(
         "--layers",
         type=FileType("rt", encoding="utf-8"),

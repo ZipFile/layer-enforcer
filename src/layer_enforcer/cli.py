@@ -34,6 +34,11 @@ def main(
     config_loader: ConfigLoader = DEFAULT_CONFIG_LOADER,
 ) -> None:
     config = config_loader.load(Config())
+
+    if not config.modules:
+        writeln("No modules to check.")
+        sys.exit(10)
+
     tree_factory = load_factory(config.tree_factory_module, import_module)
     tree = tree_factory(*config.modules)
     conflicts = match_modules(tree=tree, layers=config.layers)

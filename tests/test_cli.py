@@ -3,6 +3,8 @@ from pytest import fixture, raises
 
 from layer_enforcer.cli import DEFAULT_LAYER_LOADER, main
 from layer_enforcer.config.args import ArgparseConfigLoader
+from layer_enforcer.config.interfaces import Config
+from layer_enforcer.config.testing import NoopConfigLoader
 from layer_enforcer.interfaces import Conflict, Layer, Match
 
 
@@ -127,3 +129,26 @@ def test_main_no_conflict(tmp_path, layers_yaml):
     )
 
     assert out == []
+
+
+def test_main_no_modules():
+    out = []
+
+    def import_module(s):
+        assert False, "should not be reached"
+
+    def match_modules(tree, layers):
+        assert False, "should not be reached"
+
+    def writeln(s):
+        out.append(s)
+
+    with raises(SystemExit):
+        main(
+            writeln=writeln,
+            import_module=import_module,
+            match_modules=match_modules,
+            config_loader=NoopConfigLoader(),
+        )
+
+    assert out == ["No modules to check."]
