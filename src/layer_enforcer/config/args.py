@@ -18,7 +18,8 @@ class ParseArgs(Protocol):
         """Parse list of command line arguments into :class:`Args`.
 
         Args:
-            argv: The list of command line arguments passed to a Python script. E.g. value of ``sys.argv[1:]``.
+            argv: The list of command line arguments passed to a Python script.
+                E.g. value of ``sys.argv[1:]``.
 
         Returns:
             Parsed args data structure.

@@ -65,7 +65,8 @@ class YamlLayersLoader(LayersLoader):
 
         if not isinstance(parsed_yaml, Mapping):
             raise NotADictError(
-                "Provided layer specification must be a dict at the root of the YAML document."
+                "Provided layer specification must be a dict at the root of the "
+                "YAML document."
             )
 
         return set(self.dict_to_layers(parsed_yaml))
