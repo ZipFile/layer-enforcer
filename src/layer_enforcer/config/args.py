@@ -4,13 +4,12 @@ from typing import List, Optional, Protocol, Set, TextIO
 
 from ..interfaces import LayersLoader
 from .interfaces import Config, ConfigLoader
-from .layers import LAYERS_PATH
 
 
 @dataclass
 class Args:
     modules: List[str]
-    layers: TextIO
+    layers: Optional[TextIO]
     ignore: Set[str]
 
 
@@ -33,7 +32,6 @@ def parse_args(argv: List[str]) -> Args:
     parser.add_argument(
         "--layers",
         type=FileType("rt", encoding="utf-8"),
-        default=LAYERS_PATH,
     )
     parser.add_argument(
         "--ignore",
@@ -73,7 +71,8 @@ class ArgparseConfigLoader(ConfigLoader):
         if args.modules:
             config.modules = set(args.modules)
 
-        config.layers = self.layers_loader.text_io(args.layers)
+        if args.layers:
+            config.layers = self.layers_loader.text_io(args.layers)
 
         if args.ignore:
             config.ignore = args.ignore

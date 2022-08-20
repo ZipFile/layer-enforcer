@@ -36,7 +36,7 @@ class TestArgparseConfigLoader:
         expected_config = asdict(config)
         args = Args(
             modules=[],
-            layers=StringIO(""),
+            layers=None,
             ignore=set(),
         )
         layers_loader = StaticLayersLoader()
