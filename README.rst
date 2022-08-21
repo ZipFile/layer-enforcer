@@ -49,10 +49,24 @@ Usage
 
 .. code-block:: sh
 
-    layer-enforcer myproject myotherproject --layers layers.yaml
+    layer-enforcer myproject myotherproject --layers layers.yml
 
 
-layers.yaml
+pyproject.toml
+--------------
+
+Instead of explicitly specifying CLI arguments, it is possible to provide
+configuration via ``pyproject.toml`` within the ``tool.layer_enforcer`` table:
+
+.. code-block:: toml
+
+    [tool.layer_enforcer]
+    modules = ["myproject", "myotherproject"]
+    ignore = ["myproject.containers"]
+    layers = "layers.yml"
+
+
+layers.yml
 -----------
 
 An example of clean-architecture-ish layer layout for typical web app:
